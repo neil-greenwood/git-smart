@@ -12,12 +12,16 @@ GitSmart.register 'smart-pull' do |repo, args|
   branch = repo.current_branch
   start "Starting: smart-pull on branch '#{branch}'"
 
-  #Let's not have any arguments, fellas.
-  warn "Ignoring arguments: #{args.inspect}" if !args.empty?
+  # Argument processing
+  if args.first
+    note("Overriding tracking remote with specified remote: #{args.first}")
+    # Override the default tracking_remote processing below
+    tracking_remote = args.first
+  end
 
   #Try grabbing the tracking remote from the config. If it doesn't exist,
   #notify the user and default to 'origin'
-  tracking_remote = repo.tracking_remote ||
+  tracking_remote = tracking_remote || repo.tracking_remote ||
     note("No tracking remote configured, assuming 'origin'") ||
     'origin'
 
